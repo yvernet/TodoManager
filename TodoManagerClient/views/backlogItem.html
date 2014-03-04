@@ -1,0 +1,78 @@
+<div class="row" xmlns="http://www.w3.org/1999/html">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <form role="form" name="formBacklogItemDetail">
+            <div class="form-group">
+                <label for="inputRank">Rank</label>
+                <input type="number" class="form-control" id="inputRank" name="inputRank" placeholder="Enter rank" ng-model="story.rank" ng-pattern="/^[0-9]+$/" required>
+                <span class="alert-danger" ng-show="formBacklogItemDetail.inputRank.$dirty && formBacklogItemDetail.inputRank.$error.required">A rank is required</span>
+                <span class="alert-danger" ng-show="formBacklogItemDetail.inputRank.$dirty && formBacklogItemDetail.inputRank.$error.pattern">A rank should only contains digits</span>
+            </div>
+
+            <div class="form-group">
+                <label for="inputType">Type</label>
+                <select id="inputType" class="form-control" ng-model="story.type" ng-options="storyType for storyType in storyTypes"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="inputReference">References</label>
+                <input type="text" class="form-control" id="inputReference" name="inputReference" placeholder="Enter the reference of  the item" ng-model="story.reference" maxlength="15" required>
+                <span class="alert-danger" ng-show="formBacklogItemDetail.inputRank.$dirty && formBacklogItemDetail.inputReference.$error.required">A reference is required</span>
+            </div>
+
+            <div class="form-group">
+                <label for="inputTitle">Title</label>
+                <input type="text" class="form-control" id="inputTitle" name="inputTitle" placeholder="Title of the item" ng-model="story.title" required>
+                <span class="alert-danger" ng-show="formBacklogItemDetail.inputRank.$dirty && formBacklogItemDetail.inputTitle.$error.required">A title is required</span>
+            </div>
+
+            <div class="form-group">
+                <label for="inputPriority">Priority</label>
+                <select id="inputPriority" class="form-control" ng-model="story.priority" ng-options="priority for priority in priorities"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="inputComplexity">Complexity</label>
+                <input type="number" class="form-control" id="inputComplexity" name="inputComplexity" placeholder="Amount of point for the item" ng-model="story.complexity" ng-pattern="/^[0-9]+$/" required>
+                <span class="alert-danger" ng-show="formBacklogItemDetail.inputComplexity.$dirty && formBacklogItemDetail.inputComplexity.$error.required">A complexity value is required</span>
+                <span class="alert-danger" ng-show="formBacklogItemDetail.inputComplexity.$dirty && formBacklogItemDetail.inputComplexity.$error.pattern">A complexity should only contains digits</span>
+            </div>
+
+            <div class="form-group">
+                <label for="inputComplexityType">Complexity Type</label>
+                <select id="inputComplexityType" class="form-control" ng-model="story.complexityType" ng-options="complexityType for complexityType in complexityTypes"></select>
+            </div>
+
+            <div class="btn-toolbar" role="toolbar">
+                <button type="button" class="btn btn-danger" data-toggle="modal" ng-click="delete()">Delete <span class="glyphicon glyphicon-trash"></span></button>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-success" ng-click="save()" ng-disabled="formBacklogItemDetail.$invalid">Submit</button>
+                    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="col-lg-4"></div>
+
+
+    <!-- Modal Box -->
+    <script type="text/ng-template" id="myModalContent">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="cancelDeletion();">&times;</button>
+            <h4 class="modal-title">Delete story ?</h4>
+        </div>
+        <div class="modal-body">
+            Do you really want to delete this story ?
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger" ng-click="confirmDeletion()">Delete <span class="glyphicon glyphicon-trash"></span></button>
+                <button type="button" class="btn btn-default" ng-click="cancelDeletion();">Cancel</button>
+            </div>
+
+        </div>
+    </script>
+
+
+</div>

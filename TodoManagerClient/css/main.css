@@ -1,0 +1,28 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+
+/*
+    Necessary for angular-ui
+*/
+.nav, .pagination, .carousel a { cursor: pointer; }
+
+/*
+    Customisations
+*/
+div.jumbotron {
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+
+
+
+
+
+
+
+
