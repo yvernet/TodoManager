@@ -4,7 +4,7 @@
 from flask import Flask, abort, jsonify
 from flask.ext.restful import Api, Resource, reqparse, fields, marshal
 from flask.helpers import make_response
-import json
+
 
 app = Flask(__name__, static_url_path = "")
 api = Api(app)
@@ -12,21 +12,28 @@ api = Api(app)
 tasks = [
     {
         'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
+        'rank': 0,
+        'title': u'Make a resful back for todos',
         'done': False
     },
     {
         'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
+        'rank': 1,
+        'title': u'Make an angularjs front for todos',
+        'done': True
+    },
+    {
+        'id': 3,
+        'rank': 2,
+        'title': u'Make unitary tests for the front',
         'done': False
     }
 ]
 
 task_fields = {
+    #'rank': fields.Integer,
     'title': fields.String,
-    'description': fields.String,
+    #'description': fields.String,
     'done': fields.Boolean,
     'uri': fields.Url('task')
 }
@@ -35,8 +42,9 @@ class TaskListAPI(Resource):
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('rank', type = int, required = True, help = 'No task rank provided', location = 'json')
         self.reqparse.add_argument('title', type = str, required = True, help = 'No task title provided', location = 'json')
-        self.reqparse.add_argument('description', type = str, default = "", location = 'json')
+        #self.reqparse.add_argument('description', type = str, default = "", location = 'json')
         super(TaskListAPI, self).__init__()
 
     def get(self):
@@ -54,6 +62,7 @@ class TaskListAPI(Resource):
         }
         tasks.append(task)
         return { 'task': marshal(task, task_fields) }, 201
+
 
 class TaskAPI(Resource):
 
