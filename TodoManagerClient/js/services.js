@@ -7,11 +7,21 @@
 
 var tdmServices = angular.module('tdmServices', ['ngResource']);
 
+/*
 tdmServices.factory('TaskList', ['$resource',
     function($resource){
         return $resource('http://localhost:5000/todomanager/tasks', {}, {
         });
     }]);
+*/
+
+tdmServices.factory('Task', ['$resource',
+    function($resource){
+        return $resource('http://localhost:5000/todomanager/tasks/:taskId', {taskId:'@id'}, {
+            save: {method: 'POST', headers: {'Content-Type': 'application/json'}}
+        });
+    }]);
+
 
 /*
 apmServices.factory('Story', ['$resource',

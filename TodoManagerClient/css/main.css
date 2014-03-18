@@ -18,8 +18,12 @@ div.jumbotron {
     margin-bottom: 15px;
 }
 
-
-
+.panel-heading {
+    padding: 5px 10px;
+    border-bottom: 1px solid transparent;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
 
 
 

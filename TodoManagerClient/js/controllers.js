@@ -8,12 +8,26 @@
 
 var tdmControllers = angular.module('tdmControllers', []);
 
-tdmControllers.controller('TodoListCtrl', ['$scope', '$location', 'TaskList',
-    function($scope, $location, TaskList) {
-        $scope.taskListObject = TaskList.get();
+tdmControllers.controller('TodoListCtrl', ['$scope', '$location', 'Task',
+    function($scope, $location, Task) {
+        $scope.taskListObject = Task.get();
         $scope.taskListObject.$promise.then(function(){
             $scope.taskList = $scope.taskListObject.tasks;
         })
+
+
+        // Functions
+
+        $scope.addTask = function(){
+
+            if($scope.newTaskTitle != ''){
+                $scope.newTask = new Task();
+                $scope.newTask.title = $scope.newTaskTitle;
+                Task.save($scope.newTask);
+            }
+
+        }
+
     }]);
 
 

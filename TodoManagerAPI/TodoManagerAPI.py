@@ -1,10 +1,8 @@
 #!flask/bin/python
 
-
 from flask import Flask, abort, jsonify
 from flask.ext.restful import Api, Resource, reqparse, fields, marshal
 from flask.helpers import make_response
-
 
 app = Flask(__name__, static_url_path = "")
 api = Api(app)
@@ -35,49 +33,59 @@ task_fields = {
     'title': fields.String,
     #'description': fields.String,
     'done': fields.Boolean,
-    'uri': fields.Url('task')
-}
+    }
 
-class TaskListAPI(Resource):
+class TaskCollection(Resource):
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('rank', type = int, required = True, help = 'No task rank provided', location = 'json')
+        self.reqparse.add_argument('done', type = bool, required = True, help = 'No task done status provided', location = 'json')
         self.reqparse.add_argument('title', type = str, required = True, help = 'No task title provided', location = 'json')
         #self.reqparse.add_argument('description', type = str, default = "", location = 'json')
-        super(TaskListAPI, self).__init__()
+        super(TaskCollection, self).__init__()
 
     def get(self):
         resp = make_response(jsonify({'tasks' : map(lambda t: marshal(t, task_fields), tasks)}) , 200)
-        resp.headers.extend({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'PUT,GET' })
+        resp.headers.extend({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'PUT, GET' })
         return resp
 
     def post(self):
         args = self.reqparse.parse_args()
         task = {
             'id': tasks[-1]['id'] + 1,
+            'rank': max(task['rank'] for task in tasks) + 1,
             'title': args['title'],
-            'description': args['description'],
             'done': False
         }
         tasks.append(task)
-        return { 'task': marshal(task, task_fields) }, 201
+        #return { 'task': marshal(task, task_fields) }, 201
+        resp = make_response(jsonify({'task': marshal(task, task_fields)}) , 201)
+        resp.headers.extend({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST' })
+        return resp
+
+    def options (self):
+        return {'Allow' : 'GET,POST' }, 200, \
+               { 'Access-Control-Allow-Origin': '*', \
+                 'Access-Control-Allow-Methods' : 'GET,POST' }
 
 
-class TaskAPI(Resource):
+class Task(Resource):
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('title', type = str, location = 'json')
         self.reqparse.add_argument('description', type = str, location = 'json')
         self.reqparse.add_argument('done', type = bool, location = 'json')
-        super(TaskAPI, self).__init__()
+        super(Task, self).__init__()
 
     def get(self, id):
         task = filter(lambda t: t['id'] == id, tasks)
         if len(task) == 0:
             abort(404)
-        return { 'task': marshal(task[0], task_fields) }
+        #return { 'task': marshal(task[0], task_fields) }
+        resp = make_response(jsonify({'task' : marshal(task[0], task_fields)}) , 200)
+        resp.headers.extend({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'GET' })
+        return resp
 
     def put(self, id):
         task = filter(lambda t: t['id'] == id, tasks)
@@ -88,17 +96,23 @@ class TaskAPI(Resource):
         for k, v in args.iteritems():
             if v != None:
                 task[k] = v
-        return { 'task': marshal(task, task_fields) }
+        #return { 'task': marshal(task, task_fields) }
+        resp = make_response(jsonify({'task': marshal(task, task_fields)}) , 200)
+        resp.headers.extend({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST' })
+        return resp
 
     def delete(self, id):
         task = filter(lambda t: t['id'] == id, tasks)
         if len(task) == 0:
             abort(404)
         tasks.remove(task[0])
-        return { 'result': True }
+        #return { 'result': True }
+        resp = make_response(jsonify({'result': True}) , 200)
+        resp.headers.extend({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'DELETE' })
+        return resp
 
-api.add_resource(TaskListAPI, '/todomanager/tasks', endpoint = 'tasks')
-api.add_resource(TaskAPI, '/todomanager/tasks/<int:id>', endpoint = 'task')
+api.add_resource(TaskCollection, '/todomanager/tasks')
+api.add_resource(Task, '/todomanager/tasks/<int:id>')
 
 if __name__ == '__main__':
     app.run(debug = True)
